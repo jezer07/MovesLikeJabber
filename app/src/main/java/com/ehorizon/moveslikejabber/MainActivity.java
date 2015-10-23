@@ -159,19 +159,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void onEventMainThread(ChatEvent e) {
 
-                switch (e.getChatState()) {
-                    case ChatEvent.NEW_MESSAGE:
-                        Log.d("Message", "New Message");
-                        String from =e.getFromId();
-                        String msg = e.getMessage();
-                        if(from.equals(toId)) {
-                            ChatMessage message = new ChatMessage(msg, false, false);
-                            mAdapter.add(message);
-                            mListView.setSelection(mListView.getCount());
-                        }
-                        break;
-                }
-
+        switch (e.getChatState()) {
+            case ChatEvent.NEW_MESSAGE:
+                Log.d("Message", "New Message");
+                String from = e.getFromId();
+                String msg = e.getMessage();
+//                        Log.d("ChatEvent", "id : " + toId + ":" + from);
+//                        if(from.equals(toId)) {
+                ChatMessage message = new ChatMessage(msg, false, false);
+                mAdapter.add(message);
+                mListView.setSelection(mListView.getCount());
+//                        }
+                break;
+        }
 
 
     }
