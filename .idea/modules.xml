@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MemorizingTrustManager/MemorizingTrustManager.iml" filepath="$PROJECT_DIR$/MemorizingTrustManager/MemorizingTrustManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MemorizingTrustManager/MemorizingTrustManager.iml" filepath="$PROJECT_DIR$/MemorizingTrustManager/MemorizingTrustManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/MovesLikeJabber.iml" filepath="$PROJECT_DIR$/MovesLikeJabber.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

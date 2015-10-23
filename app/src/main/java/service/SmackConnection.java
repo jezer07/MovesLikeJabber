@@ -57,6 +57,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private final Context mApplicationContext;
     private final String mPassword;
     private final String mUsername;
+    private final String mPort;
+    private final String mHost;
     private final String mServiceName;
 
     private XMPPTCPConnection mConnection;
@@ -69,6 +71,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mApplicationContext = pContext.getApplicationContext();
         mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_password", "jez");
         String jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_jid", "jez@ehorizon.com");
+        mPort = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_port", "5222");
+        mHost = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_host", "localhost");
         mServiceName = jid.split("@")[1];
         mUsername = jid.split("@")[0];
 
@@ -81,8 +85,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
         XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
         builder.setServiceName(mServiceName);
-        builder.setHost("192.168.63.196");
-        builder.setPort(5222);
+        builder.setHost(mHost);
+        builder.setPort(Integer.parseInt(mPort));
         builder.setResource("SmackAndroidTestClient");
         builder.setUsernameAndPassword(mUsername, mPassword);
 
