@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.ehorizon.moveslikejabber.events.ChatEvent;
+import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
@@ -26,6 +27,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 
@@ -194,7 +196,17 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mApplicationContext.registerReceiver(mReceiver, filter);
     }
 
+    public void onEvent(ChatStateEvent e){
+        if(e.isIsMine()) {
+            try {
+                ChatStateManager.getInstance(mConnection).setCurrentState(e.getChatState(), mChat);
+            } catch (SmackException.NotConnectedException e1) {
+                e1.printStackTrace();
+            }
+        }
 
+
+    }
     public void onEvent(ChatEvent e){
         Log.d("onEvent",""+e.getChatState());
         switch (e.getChatState()){
@@ -223,6 +235,17 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         Log.i(TAG, "chatCreated()");
         mChat = chat;
         mChat.addMessageListener(this);
+        mChat.addMessageListener(new ChatStateListener() {
+            @Override
+            public void stateChanged(Chat chat, ChatState state) {
+            mEventBus.post(new ChatStateEvent(state,false));
+            }
+
+            @Override
+            public void processMessage(Chat chat, Message message) {
+
+            }
+        });
 
 
     }

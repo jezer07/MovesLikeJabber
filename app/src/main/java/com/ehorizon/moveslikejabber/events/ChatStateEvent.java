@@ -8,10 +8,12 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 public class ChatStateEvent {
 
 
-
+    private boolean mIsMine;
     ChatState mChatState;
 
-    public ChatStateEvent(ChatState state){
+
+    public ChatStateEvent(ChatState state,boolean isMine){
+        mIsMine = isMine;
         mChatState= state;
     }
     public ChatState getChatState() {
@@ -22,4 +24,11 @@ public class ChatStateEvent {
         this.mChatState = ChatState;
     }
 
+    public boolean isIsMine() {
+        return mIsMine;
+    }
+
+    public void setIsMine(boolean isMine) {
+        this.mIsMine = isMine;
+    }
 }

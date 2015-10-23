@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            mEventBus.post(new ChatStateEvent(ChatState.composing));
+            mEventBus.post(new ChatStateEvent(ChatState.composing,true));
             }
 
             @Override
@@ -132,7 +132,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+    public void onEventMainThread(ChatStateEvent e){
+        if(!e.isIsMine()) {
+            state.setText(" is "+ e.getChatState().toString());
 
+        }
+
+
+
+    }
     private void sendMessage(String message) {
         ChatMessage chatMessage = new ChatMessage(message, true, false);
         mAdapter.add(chatMessage);
