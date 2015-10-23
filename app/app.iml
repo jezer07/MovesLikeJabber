@@ -103,8 +103,8 @@
     <orderEntry type="library" exported="" name="smack-core-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="chat-message-view-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-core-0.4.2" level="project" />
-    <orderEntry type="library" exported="" name="smack-tcp-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
+    <orderEntry type="library" exported="" name="smack-tcp-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="smack-sasl-provided-4.1.4" level="project" />
     <orderEntry type="module" module-name="MemorizingTrustManager" exported="" />
   </component>
