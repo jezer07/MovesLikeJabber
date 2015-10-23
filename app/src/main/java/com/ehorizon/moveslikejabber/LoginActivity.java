@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void connect() {
         if(!verifyJabberID(user.getText().toString())){
-            Toast.makeText(this, "Invalid JID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid ID", Toast.LENGTH_SHORT).show();
             return;
         }
 

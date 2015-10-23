@@ -1,5 +1,6 @@
 package com.ehorizon.moveslikejabber;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -10,15 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ListView mListView;
     private Button mButtonSend;
+    private Button ok;
+    private EditText recipient;
     private EditText mEditTextMessage;
+    private TextView recipientName, state;
     private ImageView mImageView;
+    private Dialog recipientDialog;
 
 
     private ChatMessageAdapter mAdapter;
@@ -33,8 +39,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.action_create){
-
-            //
+            recipientDialog = new Dialog(this, R.style.AppTheme);
+            recipientDialog.setContentView(R.layout.recipient_list);
+            recipient = (EditText) recipientDialog.findViewById(R.id.name);
+            ok = (Button) recipientDialog.findViewById(R.id.ok );
+            ok.setOnClickListener(this);
+            recipientDialog.show();
         }
 
 
@@ -50,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         mButtonSend = (Button) findViewById(R.id.btn_send);
         mEditTextMessage = (EditText) findViewById(R.id.et_message);
         mImageView = (ImageView) findViewById(R.id.iv_image);
+        recipientName = (TextView) findViewById(R.id.recipient);
+        state = (TextView) findViewById(R.id.state);
 
         mAdapter = new ChatMessageAdapter(this, new ArrayList<ChatMessage>());
         mListView.setAdapter(mAdapter);
@@ -102,4 +114,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if(v == ok){
+            recipientName.setText(recipient.getText().toString());
+            state.setText("Idle");
+            recipientDialog.dismiss();
+        }
+    }
 }
