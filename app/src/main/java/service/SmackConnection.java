@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.ehorizon.moveslikejabber.events.ChatEvent;
+
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -37,12 +39,15 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
+import de.greenrobot.event.EventBus;
 
 
 /**
  * Created by Furuha on 27.12.2014.
  */
 public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener, ChatStateListener {
+
+    private Chat mChat;
 
     @Override
     public void stateChanged(Chat chat, ChatState state) {
@@ -64,6 +69,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private XMPPTCPConnection mConnection;
     private ArrayList<String> mRoster;
     private BroadcastReceiver mReceiver;
+    private EventBus mEventBus;
 
     public SmackConnection(Context pContext) {
         Log.i(TAG, "ChatConnection()");
@@ -75,10 +81,18 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mHost = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_host", "localhost");
         mServiceName = jid.split("@")[1];
         mUsername = jid.split("@")[0];
+        mEventBus = EventBus.getDefault();
 
+        if(!mEventBus.isRegistered(this)){
+
+            mEventBus.register(this);
+        }
 
 
     }
+
+
+
 
     public void connect() throws IOException, XMPPException, SmackException {
         Log.i(TAG, "connect()");
@@ -180,11 +194,23 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mApplicationContext.registerReceiver(mReceiver, filter);
     }
 
+
+    public void onEvent(ChatEvent e){
+        Log.d("onEvent",""+e.getChatState());
+        switch (e.getChatState()){
+            case ChatEvent.CREATE_CHAT:
+                Log.i(TAG, "sendMessage()");
+                ChatManager.getInstanceFor(mConnection).createChat(e.getToId(), this);
+                break;
+
+        }
+
+    }
+
     private void sendMessage(String body, String toJid) {
-        Log.i(TAG, "sendMessage()");
-        Chat chat = ChatManager.getInstanceFor(mConnection).createChat(toJid, this);
+
         try {
-            chat.sendMessage(body);
+            mChat.sendMessage(body);
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
@@ -195,7 +221,9 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     @Override
     public void chatCreated(Chat chat, boolean createdLocally) {
         Log.i(TAG, "chatCreated()");
-        chat.addMessageListener(this);
+        mChat = chat;
+        mChat.addMessageListener(this);
+
 
     }
 
