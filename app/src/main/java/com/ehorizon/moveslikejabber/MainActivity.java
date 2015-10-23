@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void onEventMainThread(ChatStateEvent e){
         if(!e.isIsMine()) {
+            Log.d("State","Receiving state "+e.getChatState().toString());
             state.setText(" is "+ e.getChatState().toString());
 
         }

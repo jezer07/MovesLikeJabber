@@ -49,6 +49,7 @@ import de.greenrobot.event.EventBus;
  */
 public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener, ChatStateListener {
 
+    private  String jid;
     private Chat mChat;
 
     @Override
@@ -78,7 +79,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
         mApplicationContext = pContext.getApplicationContext();
         mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_password", "jez");
-        String jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_jid", "jez@ehorizon.com");
+        jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_jid", "jez@ehorizon.com");
         mPort = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_port", "5222");
         mHost = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_host", "localhost");
         mServiceName = jid.split("@")[1];
@@ -103,7 +104,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         builder.setServiceName(mServiceName);
         builder.setHost(mHost);
         builder.setPort(Integer.parseInt(mPort));
-        builder.setResource("SmackAndroidTestClient");
+        builder.setResource(jid);
         builder.setUsernameAndPassword(mUsername, mPassword);
 
         builder.setKeystoreType("BKS");
@@ -199,6 +200,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     public void onEvent(ChatStateEvent e){
         if(e.isIsMine()) {
             try {
+                Log.d("State","Publishing state "+e.getChatState().toString());
                 ChatStateManager.getInstance(mConnection).setCurrentState(e.getChatState(), mChat);
             } catch (SmackException.NotConnectedException e1) {
                 e1.printStackTrace();
