@@ -11,7 +11,6 @@
         android:id="@+id/llRecipient"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:visibility="visible"
         android:layout_height="wrap_content">
 
         <TextView
@@ -39,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/llRecipient"
+        android:layout_above="@+id/send_message_layout"
         android:divider="@null" />
 
     <LinearLayout

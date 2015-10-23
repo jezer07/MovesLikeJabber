@@ -163,8 +163,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Log.d("Message", "New Message");
                         String from =e.getFromId();
                         String msg = e.getMessage();
-                        ChatMessage message = new ChatMessage(msg, false, false);
-                        mAdapter.add(message);
+                        if(from.equals(toId)) {
+                            ChatMessage message = new ChatMessage(msg, false, false);
+                            mAdapter.add(message);
+                            mListView.setSelection(mListView.getCount());
+                        }
                         break;
                 }
 
