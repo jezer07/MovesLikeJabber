@@ -30,6 +30,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         port = (EditText) findViewById(R.id.port);
 
         connect.setOnClickListener(this);
+
+        if(!SmackService.getState().equals(SmackConnection.ConnectionState.DISCONNECTED)){
+            connect.setText("Disconnect");
+            this.startActivity(new Intent(this, MainActivity.class));
+        }
     }
 
 
