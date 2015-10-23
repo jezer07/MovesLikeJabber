@@ -26,6 +26,7 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
+import service.SmackConnection;
 import service.SmackService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText mEditTextMessage;
     private TextView recipientName, state;
     private ImageView mImageView;
+    private ImageView ivPresence;
     private EventBus mEventBus;
     private Dialog recipientDialog;
 
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             recipientDialog = new Dialog(this, R.style.AppTheme);
             recipientDialog.setContentView(R.layout.recipient_list);
             recipient = (EditText) recipientDialog.findViewById(R.id.name);
+            ivPresence = (ImageView) findViewById(R.id.presence);
             ok = (Button) recipientDialog.findViewById(R.id.ok );
             ok.setOnClickListener(this);
             recipientDialog.show();
@@ -171,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mListView.setSelection(mListView.getCount());
 //                        }
                 break;
+            case ChatEvent.UPDATE_PRESENCE:
+                updatePresence();
+                break;
         }
 
 
@@ -200,7 +206,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             recipientName.setText(toId);
             state.setText("Idle");
             recipientDialog.dismiss();
-            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT,toId));
+            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
+            updatePresence();
+        }
+    }
+
+    public void updatePresence(){
+        Log.d("kevin", "ID : " + toId + ":" + SmackConnection.presence.get(toId));
+        ivPresence.setVisibility(View.VISIBLE);
+        if(SmackConnection.presence.get(toId)){
+            ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.online_state));
+        }else{
+            ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.offline_state));
         }
     }
 }

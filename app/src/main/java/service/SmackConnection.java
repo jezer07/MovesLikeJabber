@@ -36,6 +36,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -74,6 +75,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private BroadcastReceiver mReceiver;
     private EventBus mEventBus;
 
+    public static ConcurrentHashMap<String, Boolean> presence ;
+
     public SmackConnection(Context pContext) {
         Log.i(TAG, "ChatConnection()");
 
@@ -85,7 +88,6 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mServiceName = jid.split("@")[1];
         mUsername = jid.split("@")[0];
         mEventBus = EventBus.getDefault();
-
         if(!mEventBus.isRegistered(this)){
 
             mEventBus.register(this);
@@ -160,6 +162,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     private void rebuildRoster() {
         mRoster = new ArrayList<>();
+        presence = new ConcurrentHashMap<String, Boolean>(
+                16, 0.9f, 1);
         String status;
         for (RosterEntry entry : Roster.getInstanceFor(mConnection).getEntries()) {
             if(Roster.getInstanceFor(mConnection).getPresence(entry.getUser()).isAvailable()){
@@ -167,9 +171,11 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             } else {
                 status = "Offline";
             }
-            mRoster.add(entry.getUser()+ ": " + status);
+            mRoster.add(entry.getUser() + ": " + status);
+            presence.put(entry.getUser(), status.equals("Online") ? true : false);
         }
-
+        ChatEvent event = new ChatEvent(ChatEvent.UPDATE_PRESENCE);
+        mEventBus.post(event);
         Intent intent = new Intent(SmackService.NEW_ROSTER);
         intent.setPackage(mApplicationContext.getPackageName());
         intent.putStringArrayListExtra(SmackService.BUNDLE_ROSTER, mRoster);

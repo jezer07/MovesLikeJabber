@@ -12,6 +12,7 @@ public class ChatEvent {
     private String mMessage;
     public static final int CREATE_CHAT = 1;
     public static final int NEW_MESSAGE = 2;
+    public static final int UPDATE_PRESENCE = 3;
 
 
     public String getToId() {
