@@ -7,6 +7,13 @@ public class ChatEvent {
 
     private int mChatState;
 
+    private String mToId;
+    private String mFromId;
+    private String mMessage;
+    public static final int CREATE_CHAT = 1;
+    public static final int NEW_MESSAGE = 2;
+
+
     public String getToId() {
         return mToId;
     }
@@ -15,8 +22,6 @@ public class ChatEvent {
         this.mToId = toId;
     }
 
-    private String mToId;
-    public static final int CREATE_CHAT = 1;
 
     public ChatEvent(int state) {
         mChatState = state;
@@ -31,5 +36,21 @@ public class ChatEvent {
 
     public void setChatState(int chatState) {
         this.mChatState = chatState;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String message) {
+        this.mMessage = message;
+    }
+
+    public String getFromId() {
+        return mFromId;
+    }
+
+    public void setFromId(String fromId) {
+        this.mFromId = fromId;
     }
 }

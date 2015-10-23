@@ -30,4 +30,5 @@ dependencies {
     compile "org.igniterealtime.smack:smack-extensions:4.1.4"
     compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'de.greenrobot:eventbus:2.4.0'
 }

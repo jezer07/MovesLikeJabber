@@ -1,12 +1,14 @@
 package com.ehorizon.moveslikejabber;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EventBus mEventBus;
     private Dialog recipientDialog;
 
-
+    private BroadcastReceiver mReceiver;
     private ChatMessageAdapter mAdapter;
     private String toId;
 
@@ -81,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mButtonSend = (Button) findViewById(R.id.btn_send);
         mEditTextMessage = (EditText) findViewById(R.id.et_message);
         mEventBus = EventBus.getDefault();
- /*       if (!mEventBus.isRegistered(this))
-            mEventBus.register(this);*/
+        if (!mEventBus.isRegistered(this))
+            mEventBus.register(this);
         mEditTextMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -146,7 +148,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //        mimicOtherMessage(message);
     }
+    public void onEventMainThread(ChatEvent e) {
 
+                switch (e.getChatState()) {
+                    case ChatEvent.NEW_MESSAGE:
+                        Log.d("Message", "New Message");
+                        String from =e.getFromId();
+                        String msg = e.getMessage();
+                        ChatMessage message = new ChatMessage(msg, false, false);
+                        mAdapter.add(message);
+                        break;
+                }
+
+
+
+    }
     private void mimicOtherMessage(String message) {
         ChatMessage chatMessage = new ChatMessage(message, false, false);
         mAdapter.add(chatMessage);

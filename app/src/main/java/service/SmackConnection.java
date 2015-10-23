@@ -235,27 +235,22 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         Log.i(TAG, "processMessage()");
         if (message.getType().equals(Message.Type.chat) || message.getType().equals(Message.Type.normal)) {
             if (message.getBody() != null) {
-                Intent intent = new Intent(SmackService.NEW_MESSAGE);
+
+                ChatEvent event = new ChatEvent(ChatEvent.NEW_MESSAGE);
+                event.setMessage(message.getBody());
+                event.setFromId(message.getFrom());
+                mEventBus.post(event);
+
+ /*               Intent intent = new Intent(SmackService.NEW_MESSAGE);
                 intent.setPackage(mApplicationContext.getPackageName());
                 intent.putExtra(SmackService.BUNDLE_MESSAGE_BODY, message.getBody());
                 intent.putExtra(SmackService.BUNDLE_FROM_JID, message.getFrom());
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
                     intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
                 }
-                mApplicationContext.sendBroadcast(intent);
+                mApplicationContext.sendBroadcast(intent);*/
                 Log.i(TAG, "processMessage() BroadCast send");
             }
-        }else if(ChatState.composing.equals(message)){
-            Intent intent = new Intent(SmackService.TYPING);
-            intent.setPackage(mApplicationContext.getPackageName());
-            intent.putExtra(SmackService.BUNDLE_MESSAGE_BODY, " is typing");
-            intent.putExtra(SmackService.BUNDLE_FROM_JID, message.getFrom());
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-            }
-            mApplicationContext.sendBroadcast(intent);
-            Log.i(TAG, "processMessage() BroadCast send");
-
         }
     }
 
