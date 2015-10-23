@@ -71,9 +71,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mEventBus.post(new ChatStateEvent(ChatState.inactive, true));
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mEventBus.post(new ChatStateEvent(ChatState.active, true));
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        mEventBus.post(new ChatStateEvent(ChatState.gone, true));
         mEventBus.unregister(this);
     }
 
@@ -89,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!mEventBus.isRegistered(this))
             mEventBus.register(this);
         mEditTextMessage.addTextChangedListener(new TextWatcher() {
-            @Override
+                @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
@@ -123,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 sendMessage(message);
                 mEditTextMessage.setText("");
+                mEventBus.post(new ChatStateEvent(ChatState.active, true));
             }
         });
 

@@ -12,12 +12,15 @@ public class ChatStateEvent {
     ChatState mChatState;
 
 
+
     public ChatStateEvent(ChatState state,boolean isMine){
         mIsMine = isMine;
         mChatState= state;
     }
     public ChatState getChatState() {
+
         return mChatState;
+
     }
 
     public void setChatState(ChatState ChatState) {
