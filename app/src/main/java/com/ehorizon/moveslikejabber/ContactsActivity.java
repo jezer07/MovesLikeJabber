@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.ehorizon.moveslikejabber.adapters.ContactsAdapter;
+import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.listener.RecyclerItemClickListener;
 import com.ehorizon.moveslikejabber.pojo.Contact;
 
@@ -141,8 +142,10 @@ public class ContactsActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                     //TODO create conference
+                    mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, input.getText().toString()));
+                    Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                    startActivity(i);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -164,8 +167,10 @@ public class ContactsActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                     //TODO Join Conference
+                    mEventBus.post(new ChatEvent(ChatEvent.JOIN_CONFERENCE, input.getText().toString()));
+                    Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                    startActivity(i);
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

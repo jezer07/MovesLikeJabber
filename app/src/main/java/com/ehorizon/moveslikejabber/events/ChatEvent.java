@@ -14,6 +14,7 @@ public class ChatEvent {
     public static final int NEW_MESSAGE = 2;
     public static final int UPDATE_PRESENCE = 3;
     public static final int CREATE_CONFERENCE = 4;
+    public static final int JOIN_CONFERENCE = 5;
 
 
     public String getToId() {

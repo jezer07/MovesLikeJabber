@@ -250,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             state.setText("Idle");
             recipientDialog.dismiss();
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
-            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, toId));
 //            updatePresence();
         }
     }
@@ -274,7 +273,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(instance == null)
             instance = new MainActivity();
         return instance;
-    }
-    }*/
     }
 }
