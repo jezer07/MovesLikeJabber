@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">MovesLikeJabber</string>
-    <string name="title_activity_contacts">ContactsActivity</string>
+    <string name="title_activity_contacts">Contacts</string>
 </resources>
