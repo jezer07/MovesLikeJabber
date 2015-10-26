@@ -168,6 +168,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
 
     private void rebuildRoster() {
+
+
         mRoster = new ArrayList<>();
         presence = new ArrayList<>();
         String status;

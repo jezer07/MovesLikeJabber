@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ChatMessageAdapter mAdapter;
     private static MainActivity instance;
     private String toId;
+    private boolean isGroup;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(getIntent()!=null&getIntent().getExtras()!=null){
             toId = getIntent().getStringExtra(ContactsActivity.CONTACT_ID);
             recipientName.setText(toId);
-            boolean isGroup = getIntent().getBooleanExtra(ContactsActivity.IS_GROUP, false);
+            isGroup = getIntent().getBooleanExtra(ContactsActivity.IS_GROUP, false);
             if(!isGroup) {
                 mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
                 updatePresence();
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case ChatEvent.UPDATE_PRESENCE:
 
-                Log.d("onEvent","ContactsAdapter");
+                Log.d("onEvent", "ContactsAdapter");
 
                 updatePresence();
                 break;
@@ -259,6 +260,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updatePresence(){
+        if(isGroup){
+            return;
+        }
 
         Contact contact = new Contact();
         contact.setId(toId);
