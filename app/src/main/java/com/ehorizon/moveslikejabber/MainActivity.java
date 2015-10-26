@@ -22,13 +22,10 @@ import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.receipts.DeliveryReceipt;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
-import service.SmackConnection;
 import service.SmackService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -177,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //        mimicOtherMessage(message);
     }
+
+
+
     public void onEventMainThread(ChatEvent e) {
 
         switch (e.getChatState()) {
@@ -192,7 +192,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        }
                 break;
             case ChatEvent.UPDATE_PRESENCE:
-                updatePresence();
+
+                Log.d("onEvent","ContactsAdapter");
+
+               // updatePresence();
                 break;
         }
 
@@ -226,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, toId));
             updatePresence();
+           // updatePresence();
         }
     }
 
@@ -244,4 +248,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             instance = new MainActivity();
         return instance;
     }
+    }*/
 }

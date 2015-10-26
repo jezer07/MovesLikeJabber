@@ -2,6 +2,7 @@ package com.ehorizon.moveslikejabber.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ehorizon.moveslikejabber.R;
+import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.pojo.Contact;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
+import service.SmackConnection;
 
 /**
  * Created by phjecr on 10/26/15.
@@ -21,12 +26,25 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private Context mContext;
     private List<Contact> mContacts;
+    private EventBus mEventBus;
 
     public ContactsAdapter(Context context,List<Contact> contacts) {
         this.mContext = context;
         this.mContacts = contacts;
+        mEventBus = EventBus.getDefault();
+        if(!mEventBus.isRegistered(this)){
+            mEventBus.register(this);
+        }
     }
 
+    public void onEventMainThread(ChatEvent e){
+        Log.d("onEvent","ContactsAdapter");
+        if(e.getChatState()== ChatEvent.UPDATE_PRESENCE){
+            mContacts = SmackConnection.presence;
+            notifyDataSetChanged();
+        }
+
+    }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(mContext).inflate(R.layout.row_contacts,parent,false);
@@ -44,10 +62,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             holder.contactPresence.setImageDrawable(mContext.getResources().getDrawable(R.drawable.offline_state));
     }
 
+
+
+
+
     @Override
     public int getItemCount() {
         return mContacts.size();
     }
+
+
 
     static public class ViewHolder extends RecyclerView.ViewHolder{
 
