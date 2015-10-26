@@ -20,12 +20,16 @@ import android.widget.TextView;
 
 import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
+import com.ehorizon.moveslikejabber.pojo.Contact;
 
 import org.jivesoftware.smackx.chatstates.ChatState;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import service.SmackConnection;
 import service.SmackService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -36,9 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button ok;
     private EditText recipient;
     private EditText mEditTextMessage;
-    private TextView recipientName, state;
+    @Bind(R.id.recipient)
+    TextView recipientName;
+
+    private TextView state;
     private ImageView mImageView;
-    private ImageView ivPresence;
+    @Bind(R.id.presence)
+    ImageView ivPresence;
     private EventBus mEventBus;
     private Dialog recipientDialog;
 
@@ -62,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivPresence = (ImageView) findViewById(R.id.presence);
             ok = (Button) recipientDialog.findViewById(R.id.ok );
             ok.setOnClickListener(this);
+
+
+
             recipientDialog.show();
+
         }
 
 
@@ -93,13 +105,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         mListView = (ListView) findViewById(R.id.listView);
         mButtonSend = (Button) findViewById(R.id.btn_send);
         mEditTextMessage = (EditText) findViewById(R.id.et_message);
         mEventBus = EventBus.getDefault();
         if (!mEventBus.isRegistered(this))
             mEventBus.register(this);
+        if(getIntent()!=null&getIntent().getExtras()!=null){
+            toId = getIntent().getStringExtra(ContactsActivity.CONTACT_ID);
+            recipientName.setText(toId);
+            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
+            updatePresence();
+        }
+
+
+
+
         mEditTextMessage.addTextChangedListener(new TextWatcher() {
                 @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -119,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         mImageView = (ImageView) findViewById(R.id.iv_image);
-        recipientName = (TextView) findViewById(R.id.recipient);
+
         state = (TextView) findViewById(R.id.state);
 
         mAdapter = new ChatMessageAdapter(this, new ArrayList<ChatMessage>());
@@ -194,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 Log.d("onEvent","ContactsAdapter");
 
-               // updatePresence();
+                updatePresence();
                 break;
         }
 
@@ -223,20 +245,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(v == ok){
            toId = recipient.getText().toString();
             recipientName.setText(toId);
-            state.setText("Idle");
+
             recipientDialog.dismiss();
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
            // updatePresence();
         }
     }
 
-/*    public void updatePresence(){
-        Log.d("kevin", "ID : " + toId + ":" + SmackConnection.presence.get(toId));
+    public void updatePresence(){
+
+        Contact contact = new Contact();
+        contact.setId(toId);
+        Log.d("kevin", "ID : " + toId + ":" + SmackConnection.presence.get(SmackConnection.presence.indexOf(contact)).getId());
+        Log.d("kevin", "STATUS : " + toId + ":" +SmackConnection.presence.get(SmackConnection.presence.indexOf(contact)).getStatus());
         ivPresence.setVisibility(View.VISIBLE);
-        if(SmackConnection.presence.get(toId)){
+        boolean online = SmackConnection.presence.get(SmackConnection.presence.indexOf(contact)).getStatus();
+        if(online){
             ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.online_state));
         }else{
             ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.offline_state));
         }
-    }*/
+    }
 }

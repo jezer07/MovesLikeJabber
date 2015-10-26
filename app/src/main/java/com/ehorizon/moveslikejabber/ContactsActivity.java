@@ -1,15 +1,19 @@
 package com.ehorizon.moveslikejabber;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import com.ehorizon.moveslikejabber.adapters.ContactsAdapter;
+import com.ehorizon.moveslikejabber.listener.RecyclerItemClickListener;
 import com.ehorizon.moveslikejabber.pojo.Contact;
 
 import org.jivesoftware.smack.SmackException;
@@ -28,7 +32,7 @@ import service.SmackConnection;
 public class ContactsActivity extends AppCompatActivity {
 
 
-
+    public static final String CONTACT_ID = "contact_id";
     @Bind(R.id.contact_list)
     RecyclerView mContactList;
 
@@ -54,6 +58,18 @@ public class ContactsActivity extends AppCompatActivity {
         mContactsAdapter = new ContactsAdapter(this,contacts);
         mContactList.setAdapter(mContactsAdapter);
 
+        mContactList.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                            Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                        String id = mContactsAdapter.getContacts().get(position).getId();
+                            Log.d("Contact",id);
+                            i.putExtra(CONTACT_ID, id);
+                            startActivity(i);
+                    }
+                })
+        );
 
 
 /*

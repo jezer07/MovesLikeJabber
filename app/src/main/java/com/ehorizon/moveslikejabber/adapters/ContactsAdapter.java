@@ -25,6 +25,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
 
     private Context mContext;
+
+    public List<Contact> getContacts() {
+        return mContacts;
+    }
+
     private List<Contact> mContacts;
     private EventBus mEventBus;
 
@@ -63,8 +68,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
 
-
-
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
 
     @Override
     public int getItemCount() {
