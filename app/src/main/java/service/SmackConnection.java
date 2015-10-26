@@ -284,10 +284,12 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     @Override
     public void processMessage(Message message) {
-        Log.d(TAG, "group message : " + message.getBody() + " - " + message.getFrom());
-        if(message.getType() == Message.Type.groupchat && message.getBody() != null){
+        String from = message.getFrom().split("/")[1];
+        Log.d(TAG, "group message : " + message.getBody() + " - " + from + " - " + jid);
+        if(message.getType() == Message.Type.groupchat && message.getBody() != null
+                && !from.equals(jid)){
             ChatEvent event = new ChatEvent(ChatEvent.NEW_MESSAGE);
-            event.setMessage(message.getBody());
+            event.setMessage(message.getBody() + "\n" + from);
             event.setFromId(message.getFrom());
             mEventBus.post(event);
         }
