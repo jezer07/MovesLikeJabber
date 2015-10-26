@@ -60,6 +60,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     private  String jid;
     private Chat mChat;
+    private boolean isGroup;
 
 
     public static enum ConnectionState {
@@ -145,10 +146,9 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         setupSendMessageReceiver();
 
         ChatManager.getInstanceFor(mConnection).addChatListener(this);
+
        // ChatManager.getInstanceFor(mConnection).createChat("leq@192.168.63.196",new );
         Roster.getInstanceFor(mConnection).addRosterListener(this);
-        mucManager = MultiUserChatManager.getInstanceFor(mConnection);
-        mucManager.addInvitationListener(this);
         Roster.getInstanceFor(mConnection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
     }
@@ -226,12 +226,17 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         switch (e.getChatState()){
             case ChatEvent.CREATE_CHAT:
                 Log.i(TAG, "sendMessage()");
+                isGroup = false;
                 ChatManager.getInstanceFor(mConnection).createChat(e.getToId(), this);
                 break;
             case ChatEvent.CREATE_CONFERENCE:
+                mucManager = MultiUserChatManager.getInstanceFor(mConnection);
+                isGroup = true;
                 createConference(e.getToId());
                 break;
             case ChatEvent.JOIN_CONFERENCE:
+                mucManager = MultiUserChatManager.getInstanceFor(mConnection);
+                isGroup = true;
                 joinChat(e.getToId());
                 break;
 
@@ -242,7 +247,9 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private void sendMessage(String body, String toJid) {
 
         try {
+            if(!isGroup)
             mChat.sendMessage(body);
+            else
             sendGroupMessage("ejabberd@conference.ehorizon.com", body);
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
@@ -278,6 +285,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     @Override
     public void chatCreated(Chat chat, boolean createdLocally) {
+
         Log.i(TAG, "chatCreated()");
         mChat = chat;
         mChat.addMessageListener(this);
@@ -326,6 +334,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private void sendGroupMessage(String roomName, String body){
         Log.d(TAG, "sendGroupMessage ... " + roomName);
         MultiUserChat muc = mucManager.getMultiUserChat(roomName);
+
         try {
             muc.join(jid);
             muc.sendMessage(body);
@@ -359,7 +368,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             });
 
             muc.sendConfigurationForm(new Form(DataForm.Type.submit));
-            inviteToChat("kevkev@ehorizon.com", roomName);
+            //inviteToChat("kevkev@ehorizon.com", roomName);
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
         } catch (SmackException e) {
