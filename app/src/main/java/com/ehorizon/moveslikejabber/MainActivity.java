@@ -118,8 +118,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(getIntent()!=null&getIntent().getExtras()!=null){
             toId = getIntent().getStringExtra(ContactsActivity.CONTACT_ID);
             recipientName.setText(toId);
-            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
-            updatePresence();
+            boolean isGroup = getIntent().getBooleanExtra(ContactsActivity.IS_GROUP, false);
+            if(!isGroup) {
+                mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
+                updatePresence();
+            }
         }
 
 

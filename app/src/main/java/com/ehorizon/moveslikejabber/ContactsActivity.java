@@ -36,6 +36,7 @@ public class ContactsActivity extends AppCompatActivity {
 
 
     public static final String CONTACT_ID = "contact_id";
+    public static final String IS_GROUP = "IS_GROUP";
     @Bind(R.id.contact_list)
     RecyclerView mContactList;
 
@@ -69,6 +70,7 @@ public class ContactsActivity extends AppCompatActivity {
                         String id = mContactsAdapter.getContacts().get(position).getId();
                             Log.d("Contact",id);
                             i.putExtra(CONTACT_ID, id);
+                             i.putExtra(IS_GROUP,false);
                             startActivity(i);
                     }
                 })
@@ -146,6 +148,7 @@ public class ContactsActivity extends AppCompatActivity {
                     mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, input.getText().toString()));
                     Intent i = new Intent(ContactsActivity.this,MainActivity.class);
                     i.putExtra(CONTACT_ID, input.getText().toString());
+                    i.putExtra(IS_GROUP,true);
                     startActivity(i);
                 }
             });
@@ -171,6 +174,7 @@ public class ContactsActivity extends AppCompatActivity {
                     //TODO Join Conference
                     mEventBus.post(new ChatEvent(ChatEvent.JOIN_CONFERENCE, input.getText().toString()));
                     Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                    i.putExtra(IS_GROUP,true);
                     i.putExtra(CONTACT_ID, input.getText().toString());
                     startActivity(i);
                 }
