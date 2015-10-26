@@ -145,6 +145,7 @@ public class ContactsActivity extends AppCompatActivity {
                     //TODO create conference
                     mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, input.getText().toString()));
                     Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                    i.putExtra(CONTACT_ID, input.getText().toString());
                     startActivity(i);
                 }
             });
@@ -170,6 +171,7 @@ public class ContactsActivity extends AppCompatActivity {
                     //TODO Join Conference
                     mEventBus.post(new ChatEvent(ChatEvent.JOIN_CONFERENCE, input.getText().toString()));
                     Intent i = new Intent(ContactsActivity.this,MainActivity.class);
+                    i.putExtra(CONTACT_ID, input.getText().toString());
                     startActivity(i);
                 }
             });
