@@ -79,7 +79,6 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     public SmackConnection(Context pContext) {
         Log.i(TAG, "ChatConnection()");
-
         mApplicationContext = pContext.getApplicationContext();
         mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_password", "jez");
         jid = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_jid", "jez@ehorizon.com");

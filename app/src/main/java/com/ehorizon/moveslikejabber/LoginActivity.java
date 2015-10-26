@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Intent intent = new Intent(this, SmackService.class);
             this.startService(intent);
 
-            this.startActivity(new Intent(this, MainActivity.class));
+            this.startActivity(new Intent(this, ContactsActivity.class));
         } else {
             connect.setText("Connect");
             Intent intent = new Intent(this, SmackService.class);

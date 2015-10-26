@@ -22,6 +22,8 @@ import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 
 import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.receipts.DeliveryReceipt;
+import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 
 import java.util.ArrayList;
 
