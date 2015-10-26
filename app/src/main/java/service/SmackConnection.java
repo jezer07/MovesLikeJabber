@@ -62,6 +62,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private  String jid;
     private Chat mChat;
     private boolean isGroup;
+    private String toId;
 
     public static enum ConnectionState {
         CONNECTED, CONNECTING, RECONNECTING, DISCONNECTED;
@@ -229,7 +230,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             case ChatEvent.CREATE_CHAT:
                 Log.i(TAG, "sendMessage()");
                 isGroup = false;
-                ChatManager.getInstanceFor(mConnection).createChat(e.getToId(), this);
+                toId = e.getToId();
+                ChatManager.getInstanceFor(mConnection).createChat(toId, this);
                 break;
             case ChatEvent.CREATE_CONFERENCE:
                 mucManager = MultiUserChatManager.getInstanceFor(mConnection);
@@ -324,13 +326,19 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     public void processMessage(Chat chat, Message message) {
         Log.d(TAG, "indi message" + message.getBody() + " - " + chat.getParticipant());
         Log.i(TAG, "processMessage()");
+
+        String incomingAddress = chat.getParticipant().split("/")[0];
+        Log.d(TAG,"Incoming address : "+incomingAddress);
+
+
         if (message.getType().equals(Message.Type.chat) || message.getType().equals(Message.Type.normal)) {
-            if (message.getBody() != null) {
+            if (message.getBody() != null&&incomingAddress.equals(toId)) {
 
                 ChatEvent event = new ChatEvent(ChatEvent.NEW_MESSAGE);
                 event.setMessage(message.getBody());
                 event.setFromId(message.getFrom());
                 mEventBus.post(event);
+
 
  /*               Intent intent = new Intent(SmackService.NEW_MESSAGE);
                 intent.setPackage(mApplicationContext.getPackageName());
