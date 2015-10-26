@@ -250,7 +250,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             if(!isGroup)
             mChat.sendMessage(body);
             else
-            sendGroupMessage("ejabberd@conference.ehorizon.com", body);
+            sendGroupMessage(toJid, body);
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
