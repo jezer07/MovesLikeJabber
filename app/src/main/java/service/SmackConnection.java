@@ -56,12 +56,12 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Furuha on 27.12.2014.
  */
-public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener, ChatStateListener, InvitationListener, InvitationRejectionListener {
+public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener,
+        ChatStateListener, InvitationListener, InvitationRejectionListener, MessageListener {
 
     private  String jid;
     private Chat mChat;
     private boolean isGroup;
-
 
     public static enum ConnectionState {
         CONNECTED, CONNECTING, RECONNECTING, DISCONNECTED;
@@ -279,6 +279,18 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         }
     }
 
+
+    @Override
+    public void processMessage(Message message) {
+        Log.d(TAG, "group message : " + message.getBody() + " - " + message.getFrom());
+        if(message.getType() == Message.Type.groupchat && message.getBody() != null){
+            ChatEvent event = new ChatEvent(ChatEvent.NEW_MESSAGE);
+            event.setMessage(message.getBody());
+            event.setFromId(message.getFrom());
+            mEventBus.post(event);
+        }
+    }
+
     @Override
     public void invitationDeclined(String invitee, String reason) {
         Log.d(TAG, "rejected ... " + invitee + ":" + reason);
@@ -310,7 +322,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     @Override
     public void processMessage(Chat chat, Message message) {
-        Log.d("Message",message.toString());
+        Log.d(TAG, "indi message" + message.getBody() + " - " + chat.getParticipant());
         Log.i(TAG, "processMessage()");
         if (message.getType().equals(Message.Type.chat) || message.getType().equals(Message.Type.normal)) {
             if (message.getBody() != null) {
@@ -338,20 +350,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         MultiUserChat muc = mucManager.getMultiUserChat(roomName);
 
         try {
-            muc.join(jid);
             muc.sendMessage(body);
-            muc.addMessageListener(new MessageListener() {
-                @Override
-                public void processMessage(Message message) {
-                    Log.d(TAG, "message : " + message);
-
-                }
-            });
         } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
         }
 
@@ -383,6 +383,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         Log.d(TAG, "joining ... " + roomName);
         MultiUserChat muc = mucManager.getMultiUserChat(roomName);
         try {
+            muc.addMessageListener(this);
             muc.join(jid);
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();

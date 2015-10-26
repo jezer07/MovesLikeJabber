@@ -58,7 +58,7 @@ public class ContactsActivity extends AppCompatActivity {
         contacts = new ArrayList<>();
 
 
-
+        mEventBus = EventBus.getDefault();
         mContactsAdapter = new ContactsAdapter(this,contacts);
         mContactList.setAdapter(mContactsAdapter);
 
