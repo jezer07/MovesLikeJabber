@@ -1,15 +1,12 @@
 package service;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.ehorizon.moveslikejabber.MainActivity;
 import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 import com.ehorizon.moveslikejabber.pojo.Contact;
@@ -63,10 +60,6 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private  String jid;
     private Chat mChat;
 
-    @Override
-    public void stateChanged(Chat chat, ChatState state) {
-        Log.d("Message","stateChange");
-    }
 
     public static enum ConnectionState {
         CONNECTED, CONNECTING, RECONNECTING, DISCONNECTED;
@@ -80,9 +73,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private final String mHost;
     private final String mServiceName;
 
-    private XMPPTCPConnection mConnection;
-    private MultiUserChatManager mucManager;
     public static XMPPTCPConnection mConnection;
+    private MultiUserChatManager mucManager;
     private ArrayList<String> mRoster;
     private BroadcastReceiver mReceiver;
     private EventBus mEventBus;
@@ -195,7 +187,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         }
-        mApplicationContext.sendBroadcast(intent);
+        mApplicationContext.sendBroadcast(intent);*/
     }
 
     private void setupSendMessageReceiver() {
@@ -262,42 +254,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     @Override
     public void invitationReceived(XMPPConnection conn, final MultiUserChat room, final String inviter, String reason, String password, Message message) {
         Log.d(TAG, "Inviting ...... " + inviter + ":" + reason + ":" + room.getRoom());
-        MainActivity.getInstance().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.getInstance()).create();
-                alertDialog.setTitle("Group chat request");
-                alertDialog.setMessage(inviter.split("/")[0] + " is inviting you to join " + room.getRoom());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Accept",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    room.join(jid);
-                                } catch (SmackException.NoResponseException e) {
-                                    e.printStackTrace();
-                                } catch (XMPPException.XMPPErrorException e) {
-                                    e.printStackTrace();
-                                } catch (SmackException.NotConnectedException e) {
-                                    e.printStackTrace();
-                                }
-                                dialog.dismiss();
-                            }
-                        });
 
-                alertDialog.setButton("Decline",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    mucManager.decline(room.getRoom(), inviter, "Not now");
-                                } catch (SmackException.NotConnectedException e) {
-                                    e.printStackTrace();
-                                }
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-        });
     }
 
     @Override
@@ -364,8 +321,12 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
                     Log.d(TAG, "invitationDeclined");
                 }
             });
+
             muc.sendConfigurationForm(new Form(DataForm.Type.submit));
             inviteToChat("kevkev@ehorizon.com", roomName);
+            Message msg = new Message(to, Message.Type.groupchat);
+            msg.setBody(msgText);
+            muc.sendMessage(msg);
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
         } catch (SmackException e) {

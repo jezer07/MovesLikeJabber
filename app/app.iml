@@ -76,7 +76,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/23.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/me.himanshusoni.chatmessageview/chat-message-view/1.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jacoco" />
@@ -95,7 +94,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="rxandroid-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="smack-resolver-minidns-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="smack-im-4.1.4" level="project" />
@@ -104,7 +102,6 @@
     <orderEntry type="library" exported="" name="minidns-0.1.7" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-util-cache-0.4.2" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.0.14" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.0.1" level="project" />
@@ -113,8 +110,8 @@
     <orderEntry type="library" exported="" name="chat-message-view-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-core-0.4.2" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="smack-tcp-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
+    <orderEntry type="library" exported="" name="smack-tcp-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="smack-sasl-provided-4.1.4" level="project" />
     <orderEntry type="module" module-name="MemorizingTrustManager" exported="" />
   </component>

@@ -251,8 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             recipientDialog.dismiss();
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, toId));
-            updatePresence();
-           // updatePresence();
+//            updatePresence();
         }
     }
 
