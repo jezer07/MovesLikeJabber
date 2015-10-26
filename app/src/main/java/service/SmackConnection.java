@@ -210,7 +210,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     }
 
     public void onEvent(ChatStateEvent e){
-        if(e.isIsMine()) {
+        if(e.isIsMine()&&!isGroup) {
             try {
                 Log.d("State","Publishing state "+e.getChatState().toString());
                 ChatStateManager.getInstance(mConnection).setCurrentState(e.getChatState(), mChat);

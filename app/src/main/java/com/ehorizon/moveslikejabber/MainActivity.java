@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
+
         mEventBus.post(new ChatStateEvent(ChatState.inactive, true));
 
     }
