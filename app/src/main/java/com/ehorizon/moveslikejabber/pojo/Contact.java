@@ -13,6 +13,10 @@ public class Contact {
         this.status = status;
     }
 
+    public Contact() {
+
+    }
+
     public String getId() {
         return id;
     }
@@ -29,8 +33,19 @@ public class Contact {
         this.status = status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Contact contact = (Contact) o;
 
+        return id.equals(contact.id);
 
+    }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
