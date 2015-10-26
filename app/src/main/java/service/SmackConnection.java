@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
+import com.ehorizon.moveslikejabber.pojo.Contact;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
@@ -36,7 +37,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -70,12 +71,12 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private final String mHost;
     private final String mServiceName;
 
-    private XMPPTCPConnection mConnection;
+    public static XMPPTCPConnection mConnection;
     private ArrayList<String> mRoster;
     private BroadcastReceiver mReceiver;
     private EventBus mEventBus;
 
-    public static ConcurrentHashMap<String, Boolean> presence ;
+    public static List<Contact> presence ;
 
     public SmackConnection(Context pContext) {
         Log.i(TAG, "ChatConnection()");
@@ -142,6 +143,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         ChatManager.getInstanceFor(mConnection).addChatListener(this);
        // ChatManager.getInstanceFor(mConnection).createChat("leq@192.168.63.196",new );
         Roster.getInstanceFor(mConnection).addRosterListener(this);
+        Roster.getInstanceFor(mConnection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
 
     }
 
@@ -161,8 +163,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     private void rebuildRoster() {
         mRoster = new ArrayList<>();
-        presence = new ConcurrentHashMap<String, Boolean>(
-                16, 0.9f, 1);
+        presence = new ArrayList<>();
         String status;
         for (RosterEntry entry : Roster.getInstanceFor(mConnection).getEntries()) {
             if(Roster.getInstanceFor(mConnection).getPresence(entry.getUser()).isAvailable()){
@@ -171,17 +172,17 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
                 status = "Offline";
             }
             mRoster.add(entry.getUser() + ": " + status);
-            presence.put(entry.getUser(), status.equals("Online") ? true : false);
+            presence.add(new Contact(entry.getUser(), status.equals("Online") ? true : false));
         }
         ChatEvent event = new ChatEvent(ChatEvent.UPDATE_PRESENCE);
         mEventBus.post(event);
-        Intent intent = new Intent(SmackService.NEW_ROSTER);
+    /*    Intent intent = new Intent(SmackService.NEW_ROSTER);
         intent.setPackage(mApplicationContext.getPackageName());
         intent.putStringArrayListExtra(SmackService.BUNDLE_ROSTER, mRoster);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         }
-        mApplicationContext.sendBroadcast(intent);
+        mApplicationContext.sendBroadcast(intent);*/
     }
 
     private void setupSendMessageReceiver() {

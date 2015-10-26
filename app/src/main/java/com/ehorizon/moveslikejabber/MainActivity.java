@@ -22,13 +22,10 @@ import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.receipts.DeliveryReceipt;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
-import service.SmackConnection;
 import service.SmackService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -176,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //        mimicOtherMessage(message);
     }
+
+
+
     public void onEventMainThread(ChatEvent e) {
 
         switch (e.getChatState()) {
@@ -191,7 +191,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        }
                 break;
             case ChatEvent.UPDATE_PRESENCE:
-                updatePresence();
+
+                Log.d("onEvent","ContactsAdapter");
+
+               // updatePresence();
                 break;
         }
 
@@ -223,11 +226,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             state.setText("Idle");
             recipientDialog.dismiss();
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
-            updatePresence();
+           // updatePresence();
         }
     }
 
-    public void updatePresence(){
+/*    public void updatePresence(){
         Log.d("kevin", "ID : " + toId + ":" + SmackConnection.presence.get(toId));
         ivPresence.setVisibility(View.VISIBLE);
         if(SmackConnection.presence.get(toId)){
@@ -235,5 +238,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.offline_state));
         }
-    }
+    }*/
 }
