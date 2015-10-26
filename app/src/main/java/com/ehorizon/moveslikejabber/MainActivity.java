@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private BroadcastReceiver mReceiver;
     private ChatMessageAdapter mAdapter;
+    private static MainActivity instance;
     private String toId;
 
     @Override
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        instance = this;
         mListView = (ListView) findViewById(R.id.listView);
         mButtonSend = (Button) findViewById(R.id.btn_send);
         mEditTextMessage = (EditText) findViewById(R.id.et_message);
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             state.setText("Idle");
             recipientDialog.dismiss();
             mEventBus.post(new ChatEvent(ChatEvent.CREATE_CHAT, toId));
+            mEventBus.post(new ChatEvent(ChatEvent.CREATE_CONFERENCE, toId));
             updatePresence();
         }
     }
@@ -235,5 +237,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             ivPresence.setImageDrawable(this.getResources().getDrawable(R.drawable.offline_state));
         }
+    }
+
+    public static MainActivity getInstance(){
+        if(instance == null)
+            instance = new MainActivity();
+        return instance;
     }
 }

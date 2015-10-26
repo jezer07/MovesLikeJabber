@@ -1,12 +1,15 @@
 package service;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.ehorizon.moveslikejabber.MainActivity;
 import com.ehorizon.moveslikejabber.events.ChatEvent;
 import com.ehorizon.moveslikejabber.events.ChatStateEvent;
 
@@ -28,8 +31,14 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.ChatStateListener;
 import org.jivesoftware.smackx.chatstates.ChatStateManager;
+import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.InvitationRejectionListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -48,15 +57,10 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Furuha on 27.12.2014.
  */
-public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener, ChatStateListener {
+public class SmackConnection implements ConnectionListener, ChatManagerListener, RosterListener, ChatMessageListener, PingFailedListener, ChatStateListener, InvitationListener, InvitationRejectionListener {
 
     private  String jid;
     private Chat mChat;
-
-    @Override
-    public void stateChanged(Chat chat, ChatState state) {
-        Log.d("Message","stateChange");
-    }
 
     public static enum ConnectionState {
         CONNECTED, CONNECTING, RECONNECTING, DISCONNECTED;
@@ -71,6 +75,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private final String mServiceName;
 
     private XMPPTCPConnection mConnection;
+    private MultiUserChatManager mucManager;
     private ArrayList<String> mRoster;
     private BroadcastReceiver mReceiver;
     private EventBus mEventBus;
@@ -142,7 +147,8 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         ChatManager.getInstanceFor(mConnection).addChatListener(this);
        // ChatManager.getInstanceFor(mConnection).createChat("leq@192.168.63.196",new );
         Roster.getInstanceFor(mConnection).addRosterListener(this);
-
+        mucManager = MultiUserChatManager.getInstanceFor(mConnection);
+        mucManager.addInvitationListener(this);
     }
 
     public void disconnect() {
@@ -215,11 +221,14 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     }
     public void onEvent(ChatEvent e){
-        Log.d("onEvent",""+e.getChatState());
+        Log.d("onEvent", "" + e.getChatState());
         switch (e.getChatState()){
             case ChatEvent.CREATE_CHAT:
                 Log.i(TAG, "sendMessage()");
                 ChatManager.getInstanceFor(mConnection).createChat(e.getToId(), this);
+                break;
+            case ChatEvent.CREATE_CONFERENCE:
+                createConference("ronafansclub@conference.ehorizon.com");
                 break;
 
         }
@@ -238,6 +247,58 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     //ChatListener
 
     @Override
+    public void stateChanged(Chat chat, ChatState state) {
+        Log.d("Message","stateChange");
+    }
+
+    @Override
+    public void invitationReceived(XMPPConnection conn, final MultiUserChat room, final String inviter, String reason, String password, Message message) {
+        Log.d(TAG, "Inviting ...... " + inviter + ":" + reason + ":" + room.getRoom());
+        MainActivity.getInstance().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.getInstance()).create();
+                alertDialog.setTitle("Group chat request");
+                alertDialog.setMessage(inviter.split("/")[0] + " is inviting you to join " + room.getRoom());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Accept",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    room.join(jid);
+                                } catch (SmackException.NoResponseException e) {
+                                    e.printStackTrace();
+                                } catch (XMPPException.XMPPErrorException e) {
+                                    e.printStackTrace();
+                                } catch (SmackException.NotConnectedException e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+
+                alertDialog.setButton("Decline",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    mucManager.decline(room.getRoom(), inviter, "Not now");
+                                } catch (SmackException.NotConnectedException e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void invitationDeclined(String invitee, String reason) {
+        Log.d(TAG, "rejected ... " + invitee + ":" + reason);
+
+    }
+
+    @Override
     public void chatCreated(Chat chat, boolean createdLocally) {
         Log.i(TAG, "chatCreated()");
         mChat = chat;
@@ -245,7 +306,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         mChat.addMessageListener(new ChatStateListener() {
             @Override
             public void stateChanged(Chat chat, ChatState state) {
-            mEventBus.post(new ChatStateEvent(state,false));
+                mEventBus.post(new ChatStateEvent(state, false));
             }
 
             @Override
@@ -282,6 +343,53 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
                 Log.i(TAG, "processMessage() BroadCast send");
             }
         }
+    }
+
+    private void createConference(String roomName){
+        Log.d(TAG, "start createConference");
+        MultiUserChat muc = mucManager.getMultiUserChat(roomName);
+        try {
+            muc.create(roomName);
+            muc.addInvitationRejectionListener(new InvitationRejectionListener() {
+                @Override
+                public void invitationDeclined(String invitee, String reason) {
+                    Log.d(TAG, "invitationDeclined");
+                }
+            });
+            muc.sendConfigurationForm(new Form(DataForm.Type.submit));
+            inviteToChat("kevkev@ehorizon.com", roomName);
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void joinChat(String nickName, String roomName){
+        Log.d(TAG, "joining ... " + roomName);
+        MultiUserChat muc = mucManager.getMultiUserChat(roomName);
+        try {
+            muc.join(nickName);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void inviteToChat(String id, String roomName){
+        Log.d(TAG, "inviting ... " + id);
+        MultiUserChat muc = mucManager.getMultiUserChat(roomName);
+        try {
+            muc.invite(id, "Join me");
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     //ConnectionListener

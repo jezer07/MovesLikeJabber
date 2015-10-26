@@ -23,6 +23,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile project(':MemorizingTrustManager')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile "org.igniterealtime.smack:smack-android:4.1.4"
+    compile "org.igniterealtime.smack:smack-tcp:4.1.4"
+    compile "org.igniterealtime.smack:smack-core:4.1.4"
+    compile "org.igniterealtime.smack:smack-extensions:4.1.4"
 
 
     compile 'com.android.support:appcompat-v7:23.0.1'
@@ -36,6 +41,4 @@ dependencies {
     compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'io.reactivex:rxandroid:1.0.1'
-    compile 'io.reactivex:rxjava:1.0.14'
 }

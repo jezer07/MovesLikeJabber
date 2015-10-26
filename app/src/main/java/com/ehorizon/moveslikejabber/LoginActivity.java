@@ -30,8 +30,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         port = (EditText) findViewById(R.id.port);
 
 
-        user.setText("jez@ehorizon.com");
-        pass.setText("jez");
+        user.setText("kevkev@ehorizon.com");
+        pass.setText("kevkev");
         host.setText("192.168.63.196");
         port.setText("5222");
 
