@@ -37,6 +37,9 @@ public class SmackService extends Service {
     private boolean mActive;
     private Thread mThread;
     private Handler mTHandler;
+
+
+
     private SmackConnection mConnection;
 
     public SmackService() {
@@ -57,7 +60,13 @@ public class SmackService extends Service {
         start();
         return Service.START_STICKY;
     }
+    public SmackConnection getConnection() {
+        return mConnection;
+    }
 
+    public void setConnection(SmackConnection mConnection) {
+        this.mConnection = mConnection;
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -102,7 +111,7 @@ public class SmackService extends Service {
 
     private void initConnection() {
         if(mConnection == null){
-            mConnection = new SmackConnection(this);
+            mConnection = SmackConnection.getInstance(this);
         }
         try {
             mConnection.connect();

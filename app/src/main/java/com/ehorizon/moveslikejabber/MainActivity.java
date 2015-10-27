@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         mEventBus.post(new ChatStateEvent(ChatState.gone, true));
         mEventBus.unregister(this);
+        SmackConnection.getInstance(this).removeListeners();
+
     }
 
     @Override

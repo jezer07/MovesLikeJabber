@@ -63,6 +63,9 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
     private Chat mChat;
     private boolean isGroup;
     private String toId;
+    private ChatManager chatManager;
+
+
 
     public static enum ConnectionState {
         CONNECTED, CONNECTING, RECONNECTING, DISCONNECTED;
@@ -84,7 +87,10 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
     public static List<Contact> presence ;
 
-    public SmackConnection(Context pContext) {
+    private static SmackConnection instance;
+
+
+    private SmackConnection(Context pContext) {
         Log.i(TAG, "ChatConnection()");
         mApplicationContext = pContext.getApplicationContext();
         mPassword = PreferenceManager.getDefaultSharedPreferences(mApplicationContext).getString("xmpp_password", "jez");
@@ -99,9 +105,17 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             mEventBus.register(this);
         }
 
-
     }
 
+    public static SmackConnection getInstance(Context c){
+        if(instance==null){
+            return instance = new SmackConnection(c);
+        }else{
+            return instance;
+        }
+
+
+    }
 
 
 
@@ -146,7 +160,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
         setupSendMessageReceiver();
 
-        ChatManager.getInstanceFor(mConnection).addChatListener(this);
+
 
        // ChatManager.getInstanceFor(mConnection).createChat("leq@192.168.63.196",new );
         Roster.getInstanceFor(mConnection).addRosterListener(this);
@@ -231,7 +245,9 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
                 Log.i(TAG, "sendMessage()");
                 isGroup = false;
                 toId = e.getToId();
-                ChatManager.getInstanceFor(mConnection).createChat(toId, this);
+                chatManager = ChatManager.getInstanceFor(mConnection);
+                chatManager.createChat(toId, this);
+
                 break;
             case ChatEvent.CREATE_CONFERENCE:
                 mucManager = MultiUserChatManager.getInstanceFor(mConnection);
@@ -364,6 +380,13 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
+
+    }
+    public void removeListeners(){
+        if(mucManager!=null&& mucManager.getMultiUserChat(toId)!=null)
+        mucManager.getMultiUserChat(toId).removeMessageListener(this);
+        if(mChat!=null)
+        mChat.removeMessageListener(this);
 
     }
 
