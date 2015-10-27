@@ -32,14 +32,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         user.setText("kevkev@ehorizon.com");
         pass.setText("kevkev");
-        host.setText("192.168.63.196");
+        host.setText("121.97.16.56");
         port.setText("5222");
 
         connect.setOnClickListener(this);
 
         if(!SmackService.getState().equals(SmackConnection.ConnectionState.DISCONNECTED)){
             connect.setText("Disconnect");
-            this.startActivity(new Intent(this, MainActivity.class));
+            this.startActivity(new Intent(this, ContactsActivity.class));
         }
     }
 
