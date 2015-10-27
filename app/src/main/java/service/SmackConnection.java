@@ -253,10 +253,12 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
             case ChatEvent.CREATE_CONFERENCE:
                 mucManager = MultiUserChatManager.getInstanceFor(mConnection);
                 isGroup = true;
+                toId = e.getToId();
                 createConference(e.getToId());
                 break;
             case ChatEvent.JOIN_CONFERENCE:
                 mucManager = MultiUserChatManager.getInstanceFor(mConnection);
+                toId = e.getToId();
                 isGroup = true;
                 joinChat(e.getToId());
                 break;
