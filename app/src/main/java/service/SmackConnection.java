@@ -160,6 +160,7 @@ public class SmackConnection implements ConnectionListener, ChatManagerListener,
 
         setupSendMessageReceiver();
 
+         ChatManager.getInstanceFor(mConnection).addChatListener(this);
 
 
        // ChatManager.getInstanceFor(mConnection).createChat("leq@192.168.63.196",new );
